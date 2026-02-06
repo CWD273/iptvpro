@@ -1,0 +1,17 @@
+name = "hls-proxy"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+[durable_objects]
+bindings = [
+  { name = "SESSION_STATE", class_name = "SessionState" }
+]
+[[migrations]]
+tag = "v1"
+new_classes = ["SessionState"]
+[route]
+pattern = "yourdomain.com/*"
+zone_id = "YOUR_ZONE_ID"
+[dev]
+port = 8787
+local_protocol = "http"
