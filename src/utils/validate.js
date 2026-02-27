@@ -1,4 +1,4 @@
-import { FORCED_WEB_REFERER } from './constants.js';
+import { FORCED_WEB_REFERER } from './constants.js'
 export function validateWebAccess(request, env) {
   const referer = request.headers.get('Referer') || '';
   if (!referer.includes(FORCED_WEB_REFERER)) {
