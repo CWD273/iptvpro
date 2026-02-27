@@ -5,4 +5,4 @@ export default {
     env.SESSION_STATE = env.SESSION_STATE || SessionState;
     return router.handle(request, env, ctx);
   }
-}
+};
