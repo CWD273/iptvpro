@@ -15,14 +15,8 @@ export class SessionState {
     const url = new URL(request.url);
     const path = url.pathname;
     if (request.method === 'POST' && path.endsWith('/init')) {
-      const body = await request.json();
-      const { id } = body;
-      const stored = await this.state.storage.get(id);
-      if (stored) {
-        this.data = stored;
-      } else {
-        this.data.originURL = null;
-      }
+      const stored = await this.state.storage.get('session');
+      if (stored) this.data = stored;
       return new Response(JSON.stringify(this.data), {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -46,4 +40,4 @@ export class SessionState {
 export function getSessionStub(env, id) {
   const idObj = env.SESSION_STATE.idFromName(id);
   return env.SESSION_STATE.get(idObj);
-        }
+}
