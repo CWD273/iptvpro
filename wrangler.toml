@@ -10,7 +10,7 @@ bindings = [
 tag = "v1"
 new_sqlite_classes = ["SessionState"]
 [route]
-pattern = "yourdomain.com/*"
+pattern = "https://cwdiptvb.github.io/"
 zone_id = "YOUR_ZONE_ID"
 [dev]
 port = 8787
