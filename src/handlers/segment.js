@@ -2,21 +2,15 @@ import { getSessionStub } from '../durable/session.js';
 import { buildLocalPlayerHeaders } from '../utils/headers.js';
 import { refreshToken } from '../utils/token.js';
 import { badRequest, serverError } from './errors.js';
-
 export async function handleSegment(request, env, ctx) {
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     const n = url.searchParams.get('n');
-    const type = url.searchParams.get('type') || 'web';
-
-    if (!id || !n) {
-      return badRequest('Missing id or n');
-    }
-
+    if (!id || !n) return badRequest('Missing id or n');
     const session = getSessionStub(env, id);
     const state = await session.fetch('https://session/get').then(r => r.json());
-    if (!state || !state.playlist || !state.originURL) {
+    if (!state || !state.originURL) {
       return badRequest('No session state for this stream');
     }
     const originBase = state.originURL.substring(0, state.originURL.lastIndexOf('/') + 1);
