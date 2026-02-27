@@ -1,4 +1,4 @@
-name = "hls-proxy"
+name = "iptvpro"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
@@ -8,7 +8,7 @@ bindings = [
 ]
 [[migrations]]
 tag = "v1"
-new_classes = ["SessionState"]
+new_sqlite_classes = ["SessionState"]
 [route]
 pattern = "yourdomain.com/*"
 zone_id = "YOUR_ZONE_ID"
