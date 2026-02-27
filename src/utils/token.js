@@ -1,14 +1,12 @@
 import { buildLocalPlayerHeaders } from './headers.js';
 export async function getOrRefreshTokenizedPlaylist(env, session, state) {
   const now = Date.now();
-  if (state.playlist && state.expiresAt && state.expiresAt > now + 30_000) {
-    return { playlist: state.playlist, token: state.token };
+  if (state.playlist && state.expiresAt && state.expiresAt > now + 30000) {
+    return { playlist: state.playlist, token: state.token, expiresAt: state.expiresAt };
   }
   const headers = buildLocalPlayerHeaders(state.sessionHeaders);
   const resp = await fetch(state.originURL, { headers });
-  if (!resp.ok) {
-    throw new Error(`Failed to fetch origin playlist: ${resp.status}`);
-  }
+  if (!resp.ok) throw new Error(`Failed to fetch origin playlist: ${resp.status}`);
   const text = await resp.text();
   const token = extractTokenFromUrl(state.originURL);
   const expiresAt = now + 5 * 60_000;
