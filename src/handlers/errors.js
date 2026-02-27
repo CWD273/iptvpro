@@ -5,6 +5,6 @@ export function notFound(message = 'Not Found') {
   return new Response(message, { status: 404 });
 }
 export function serverError(err) {
-  const msg = (err && err.message) ? err.message : 'Internal Server Error';
+  const msg = err?.message || 'Internal Server Error';
   return new Response(msg, { status: 500 });
 }
