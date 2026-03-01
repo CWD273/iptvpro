@@ -7,15 +7,17 @@ export async function handleSegment(request, env, ctx) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     const n = url.searchParams.get('n');
-    if (!id || !n) return badRequest('Missing id or n');
+    const path = url.searchParams.get('p');
+    if (!id || !n || !path) {
+      return badRequest('Missing id, n, or p');
+    }
     const session = getSessionStub(env, id);
-    const state = await session.fetch('https://session/get').then(r => r.json());
+    let state = await session.fetch('https://session/get').then(r => r.json());
     if (!state || !state.originURL) {
       return badRequest('No session state for this stream');
     }
-    const originBase = state.originURL.substring(0, state.originURL.lastIndexOf('/') + 1);
-    const segmentName = `${n}.ts`;
-    const segmentUrl = originBase + segmentName;
+    const origin = new URL(state.originURL);
+    const segmentUrl = new URL(path, `${origin.protocol}//${origin.host}`).toString();
     const headers = buildLocalPlayerHeaders(state.sessionHeaders);
     let upstreamResp = await fetch(segmentUrl, { headers });
     if (upstreamResp.status === 403) {
@@ -23,7 +25,10 @@ export async function handleSegment(request, env, ctx) {
       if (!refreshed.ok) {
         return new Response('Forbidden (token refresh failed)', { status: 403 });
       }
-      upstreamResp = await fetch(segmentUrl, { headers });
+      state = refreshed.state || await session.fetch('https://session/get').then(r => r.json());
+      const newOrigin = new URL(state.originURL);
+      const refreshedSegmentUrl = new URL(path, `${newOrigin.protocol}//${newOrigin.host}`).toString();
+      upstreamResp = await fetch(refreshedSegmentUrl, { headers });
     }
     if (!upstreamResp.ok) {
       return new Response('Upstream error', { status: upstreamResp.status });
